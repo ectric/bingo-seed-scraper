@@ -5,11 +5,12 @@ generated on bingosync.com for both Wii Sports and
 Wii Sports Resort. This program will let the user select
 which game and bingo style to search (Wii Sports, Wii
 Sports Resort Normal, or Wii Sports Resort Stamps),
-whether to look for single or triple bingo matches,
-which tasks from the full option list they want on
-their bingo board, and whether they want to search
-for only the first matching seed or find all matches.
-The program will search through all possible seeds
+whether to look for single, double, triple, or Blackout
+bingo matches, which tasks from the full option list
+they want on their bingo board, the starting seed number
+for the search, and whether they want to search for only
+the first matching seed or find all matches. The program
+by default will search through all possible seeds
 as defined by bingosync.com (0 to 2147483647) for
 a bingo card that contains a bingo with only the
 user-selected options.
@@ -47,10 +48,12 @@ Enter the number corresponding with your desired choice (if you enter
 anything else, it will default to Wii Sports).
 
 ### %%% Q2 %%%
-#### Do you want to search single or triple bingo?
+#### Do you want to search single, double, triple, or blackout bingo?
 
 1: Single (default)
+2: Double
 3: Triple
+b: Blackout (Full)
 
 Enter the number corresponding with your desired choice (if you enter
 anything else, it will default to Single Bingo).
@@ -59,22 +62,30 @@ anything else, it will default to Single Bingo).
 ##### The program will print the full list of all possible options for the bingo list you selected in Q1 in numbered order (starting with 0). The program will then print this prompt:
 
 #### Enter the tasks you want to find in your bingo(s). Use the numbers for each item listed above and separate them with only commas, no spaces. e.g. 13,44,2,65,23
-##### Note: You must have a minimum of 5 items for single bingo and a minimum of 12 for triple bingo.
+##### Note: You must have a minimum of [#] items for [selected option] bingo.
 
 You should enter a full list of the numbers corresponding with your
 desired options to have in the bingo(s). I have not tested this code
 with incorrect formatting, so make sure to use the correct format for
 this list. The order of the numbers does not matter, but make sure to
 separate them only by commas with no spaces. If you do not enter enough
-items (<5 for single bingo or <12 for triple), the program will clear
-your choices and re-prompt you to enter your choices. Note: you can search
-for more than the minimum number of options, the program will flag any
-seeds that contain any combination of your choices in a bingo or triple
-bingo. This is especially suggested for triple bingo because it is much
-more difficult to find a match as compared to single bingo, and not every
+items (<5 for single bingo, <9 for double, <12 for triple, or <25 for blackout),
+the program will clear your choices and re-prompt you to enter your choices.
+Note: you can search for more than the minimum number of options, the program
+will flag any seeds that contain any combination of your choices in the selected
+bingo. This is especially suggested for triple and blackout bingo because it is
+much more difficult to find a match as compared to single/double bingo, and not every
 combination of options exists in the limited number of seeds bingosync allows.
 
 ### %%% Q4 %%%
+#### What seed number do you want to start at?
+##### Note: Must enter value between 0 and 2147483647 inclusive. Any other value entered will default to starting at 0.
+
+Enter any valid seed number to start at (this is useful if you had to stop a
+previous search early and want to continue where you left off). If you enter an
+invalid option, this will default to starting at 0.
+
+### %%% Q5 %%%
 #### Would you like to find all possible seeds or stop after finding the first?
 
 0: Find all matching seeds (default)
@@ -82,29 +93,31 @@ combination of options exists in the limited number of seeds bingosync allows.
 
 Enter the number corresponding with your desired choice (if you enter
 anything else, it will default to finding all matching seeds). I would
-recommend using the first only if you are looking for single bingo and
-finding all for triple bingo. Because you are likely having more options
-than necessary in triple bingo, it helps to get different variants that
-use different combinations, whereas for single bingo you will likely find
-any combination of 5 you want, so you can afford to only find the specific
-combo you want and stop once done.
+recommend using the first only option if you are looking for single/double bingo
+and the finding all option for triple/blackout bingo. Because you are likely
+having more options than necessary in the larger bingos, it helps to get different
+variants that use different combinations, whereas for single or double bingo you
+will be more likely to find the exact combination you want, so you can afford to
+only find the first matching seed and stop once done.
 
 After entering all your choices, the program will start searching seeds. It
-prints out a message every 2,000,000 seeds (this can be edited by changing
-the printRate variable on the 6th line of the code) to show the program is
-progressing and hasn't frozen. It also prints the number of successes it
-has found to that point to let you know if there are any matches that have
+prints out a message every 2,000,000 seeds to show the program is
+progressing and hasn't frozen. If this is too infrequent, you can edit this by changing
+the printRate variable on the 6th line of the code. Just open the Bingo Seed Scraper.jsx
+file in Notepad or any text editor and change the number to whatever you want and save.
+The program will run the new rate next time you type the command. It also prints the number
+of successes it has found to that point to let you know if there are any matches that have
 since scrolled off-screen. The program will continue running until it has
 searched every valid seed (unless the user has chosen to quit after the first
 match, in which case it will run until it finds a successful match if there
 is one). At any time, you can stop the program by X-ing out of the command
 prompt or pressing Ctrl-C. WARNING: Despite my best efforts to minimize the
 number of calculations this program must do to max out the speed, this program
-must search 12 possible bingos for over 2 billion seeds, so this process
-can easily take multiple hours. Depending on your computer's strength you
-may have faster times, but to run through the entire seed list took my computer
-over 12 hours. If you are a coder who understands O-notation better than me,
-feel free to try and fix this, but this is as good as I could do.
+must search 12 possible bingos or 25 total matches for over 2 billion seeds,
+so this process can easily take multiple hours. Depending on your computer's
+strength you may have faster times, but to run through the entire seed list took
+my computer over 12 hours. If you are a coder who understands O-notation better
+than me, feel free to try and fix this, but this is as good as I could do.
 
 ## ********** Final Thoughts ************
 I'm happy to be able to share this program to allow others to find seeds

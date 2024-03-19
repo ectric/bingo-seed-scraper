@@ -366,11 +366,11 @@ function printBingos(table,bingoList,i)
   console.log(msg)
 }
 
-function singleBingoScrape(generic, bingolist,endOnFirst)
+function singleBingoScrape(generic, bingolist,endOnFirst,startSeed)
 {
   var valcount = 0;
   console.log("Beginning search for seed containing a bingo using "+generic.toString() + ".\n\nWARNING: This may take multiple hours to complete");
-  for (var i = 0; i <= 2147483647; i++)
+  for (var i = startSeed; i <= 2147483647; i++)
   {
      var currSeed = i.toString();
      var table = bingoGenerator(bingolist,currSeed);
@@ -484,7 +484,7 @@ function singleBingoScrape(generic, bingolist,endOnFirst)
    console.log("Searched through all valid seeds and found "+ valcount.toString() + " seeds that match the entered options.");
 }
 
-function tripleBingoScrape(generic,bingolist,endOnFirst)
+function tripleBingoScrape(generic,bingolist,endOnFirst,numBingos,startSeed)
 {
   var gInclude = new Array(bingolist.length).fill(false);
   for(var y = 0; y < generic.length; y++)
@@ -492,9 +492,13 @@ function tripleBingoScrape(generic,bingolist,endOnFirst)
     gInclude[generic[y]] = true;
   }
   var valcount = 0;
-
-  console.log("Beginning search for seed containing three bingos using "+generic.toString() + ".\n\nWARNING: This may take multiple hours to complete");
-  for (var i = 0; i <= 2147483647; i++)
+  var beginBingos = " three ";
+  if(numBingos==2)
+  {
+    beginBingos = " two ";
+  }
+  console.log("Beginning search for seed containing" + beginBingos + "bingos using "+generic.toString() + ".\n\nWARNING: This may take multiple hours to complete");
+  for (var i = startSeed; i <= 2147483647; i++)
   {
      var currSeed = i.toString();
      var table = bingoGenerator(bingolist,currSeed);
@@ -525,7 +529,7 @@ function tripleBingoScrape(generic,bingolist,endOnFirst)
      bingoOpts[11] = gInclude[table[5]] && gInclude[table[9]]&& gInclude[table[13]]&& gInclude[table[17]]&& gInclude[table[21]];
      bcount = bingoOpts.reduce((a, b) => a + b, 0);
 
-     if(bcount>2)
+     if(bcount>(numBingos-1))
      {
        var genericmsg = "";
        for(var k = 0; k < 12; k++)
@@ -578,6 +582,56 @@ function tripleBingoScrape(generic,bingolist,endOnFirst)
   console.log("Searched through all valid seeds and found "+ valcount.toString() + " seeds that match the entered options.");
 }
 
+function fullBingoScrape(generic, bingolist,endOnFirst,startSeed)
+{
+  var valcount = 0;
+  console.log("Beginning search for seed with a bingo card using "+generic.toString() + ".\n\nWARNING: This may take multiple hours to complete");
+  for (var i = startSeed; i <= 2147483647; i++)
+  {
+
+     var currSeed = i.toString();
+     var table = bingoGenerator(bingolist,currSeed);
+     // if(i==13)
+     // {
+     //   console.log(table);
+     //   return;
+     // }
+     var match = true;
+     for(var j = 1; j <=25; j++)
+     {
+       if(!generic.includes(table[j]))
+       {
+         match = false;
+         break;
+       }
+     }
+
+     if(match)
+     {
+       var finalOpts = "";
+       for(var f = 1; f <= 25; f++)
+       {
+         finalOpts += table[f].toString() + ": " + bingoList[table[f]] + "\n";
+       }
+       console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+       console.log("SEED: " + i.toString());
+       console.log("Tasks:\n" + finalOpts);
+       console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+       if(endOnFirst)
+       {
+         console.log("Search Completed after finding matching seed");
+         return;
+       }
+       valcount++;
+     }
+     else if(i%printRate==0)
+     {
+       console.log("SEED: " + i.toString() + " | Valid Entries Calculated: " + valcount.toString());
+     }
+   }
+   console.log("Searched through all valid seeds and found "+ valcount.toString() + " seeds that match the entered options.");
+}
+
 //BingoGenerator function and original bingo lists written by kbuzsaki and obtained from Github
 //All remaining code written by Ectric
 
@@ -616,10 +670,18 @@ function q2(bingolist,listnum,numBingos,options)
       output: process.stdout
     });
 
-  readline.question("Do you want to search single or triple bingo?\n\n1: Single (default)\n3: Triple\n\nEnter Number of Bingos: ", nBingo => {
+  readline.question("Do you want to search single, double, triple, or blackout bingo?\n\n1: Single (default)\n2: Double\n3: Triple\nb: Blackout (Full)\n\nEnter Number of Bingos: ", nBingo => {
     if(nBingo=="3")
     {
       numBingos = 3;
+    }
+    else if(nBingo=="2")
+    {
+      numBingos = 2;
+    }
+    else if(nBingo=="b")
+    {
+      numBingos = 12;
     }
     readline.close();
     printBingoListArray(listnum);
@@ -634,14 +696,28 @@ function q3(bingolist,listnum,numBingos,options)
       output: process.stdout
     });
 
-  readline.question("Enter the tasks you want to find in your bingo(s). Use the numbers for each item listed above and separate them with only commas, no spaces. e.g. 13,44,2,65,23\nNote: You must have a minimum of 5 items for single bingo and a minimum of 12 for triple bingo.\n\nEnter options here: ", items => {
+  var numBingoNote = " 5 items for a single bingo search. ";
+  if(numBingos==2)
+  {
+    numBingoNote = " 9 items for a double bingo search. ";
+  }
+  else if(numBingos==3)
+  {
+    numBingoNote = " 12 items for a triple bingo search. ";
+  }
+  else if(numBingos==12)
+  {
+    numBingoNote = " 25 items for a blackout bingo search. ";
+  }
+
+  readline.question("Enter the tasks you want to find in your bingo(s). Use the numbers for each item listed above and separate them with only commas, no spaces. e.g. 13,44,2,65,23\nNote: You must have a minimum of" + numBingoNote +"\n\nEnter options here: ", items => {
     var its = items.split(",");
     for(var i = 0; i < its.length; i++)
     {
       options.push(parseInt(its[i]));
     }
     readline.close();
-    if((numBingos==1&&options.length<5)||(numBingos==3&&options.length<12))
+    if((numBingos==1&&options.length<5)||(numBingos==2&&options.length<9)||(numBingos==3&&options.length<12)||(numBingos==12&&options.length<25))
     {
       options = [];
       console.log("ERROR: Not enough options entered. Make sure your formatting is correct and you enter in enough items to make the desired bingos");
@@ -660,16 +736,39 @@ function q4(bingolist,listnum,numBingos,options)
       output: process.stdout
     });
 
+  readline.question("What seed number do you want to start at?\nNote: Must enter value between 0 and 2147483647 inclusive. Any other value entered will default to starting at 0.\n\n Enter Answer here: ", seedEntry => {
+    var startSeed = parseInt(seedEntry);
+    readline.close();
+    if(isNan(startSeed)||startSeed<0||startSeed>2147483647)
+    {
+      startSeed = 0;
+    }
+    q5(bingolist,listnum,numBingos,options,startSeed);
+  });
+
+}
+
+function q5(bingolist,listnum,numBingos,options,startSeed)
+{
+  const readline = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
   readline.question("Would you like to find all possible seeds or stop after finding the first?\n\n0: Find all matching seeds (default)\n1: Find First Only\n\n Enter Answer here: ", firstOnly => {
     var stopOnFirst = (firstOnly=="1");
     readline.close();
     if(numBingos==1)
     {
-      singleBingoScrape(options,bingolist,stopOnFirst);
+      singleBingoScrape(options,bingolist,stopOnFirst,startSeed);
+    }
+    else if(numBingos==12)
+    {
+      fullBingoScrape(options,bingolist,stopOnFirst,startSeed);
     }
     else
     {
-      tripleBingoScrape(options,bingolist,stopOnFirst);
+      tripleBingoScrape(options,bingolist,stopOnFirst,numBingos,startSeed);
     }
   });
 }
