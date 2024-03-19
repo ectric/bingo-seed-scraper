@@ -739,7 +739,7 @@ function q4(bingolist,listnum,numBingos,options)
   readline.question("What seed number do you want to start at?\nNote: Must enter value between 0 and 2147483647 inclusive. Any other value entered will default to starting at 0.\n\n Enter Answer here: ", seedEntry => {
     var startSeed = parseInt(seedEntry);
     readline.close();
-    if(isNan(startSeed)||startSeed<0||startSeed>2147483647)
+    if(isNaN(startSeed)||startSeed<0||startSeed>2147483647)
     {
       startSeed = 0;
     }
