@@ -611,7 +611,7 @@ function fullBingoScrape(generic, bingolist,endOnFirst,startSeed)
        var finalOpts = "";
        for(var f = 1; f <= 25; f++)
        {
-         finalOpts += table[f].toString() + ": " + bingoList[table[f]] + "\n";
+         finalOpts += table[f].toString() + ": " + bingolist[table[f]] + "\n";
        }
        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
        console.log("SEED: " + i.toString());
